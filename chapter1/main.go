@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"reflect"
@@ -40,38 +41,11 @@ func main() {
 
 	fmt.Println("chapter1")
 
-	for index, item := range os.Args {
-		fmt.Println("at index:", index, ",arg:", item)
-	}
+	fmt.Println("*echo program*")
+	echo(os.Args)
 
-	/*
-		this is the simple echo example which prints arguments to the stdout
-		two example about usage of args
-		first garbage way
-		second efficient way  (I think)
-
-		I hope we can compare two methods by old way (by calculating execution times)
-
-	*/
-	// first method
-	startTime := time.Now()
-	var result, space string
-	for _, item := range os.Args[1:] {
-		result += space + item
-		space = " "
-	}
-	fmt.Println("first method's result:", result)
-	endTime := time.Now()
-	firstDuration := endTime.Sub(startTime)
-	fmt.Println("first duration:", firstDuration)
-
-	//second method
-	// we ignore first element ([1:]) because it is not an argument it is command itself
-	startTime = time.Now()
-	fmt.Println("second method's result:", strings.Join(os.Args[1:], " "))
-	endTime = time.Now()
-	secondDuration := endTime.Sub(startTime)
-	fmt.Println("second duration:", secondDuration)
+	fmt.Println("*unique program*")
+	unique()
 
 	// while loop
 	condition := true
@@ -127,4 +101,82 @@ func main() {
 		fmt.Println("item as a string:", string(item))
 	}
 
+	/*
+		formatted print function
+		* It does not create new line at the end use \n
+		for tab use \t
+		* You need to specify type of variable
+		IMO It is more comfortable to use variables inside printed string
+		for example:
+	*/
+
+	numberOne := 0
+	numberTwo := 1
+	infoText := "We use %s"
+	fmt.Printf("\t number one: %d, and number two %d \n", numberOne, numberTwo)
+	fmt.Printf("For string %s \n", infoText)
+	fmt.Printf(
+		"sum of %d and %d is equals to: %f (converted to float)\n",
+		numberOne,
+		numberTwo,
+		float64(numberOne+numberTwo),
+	)
+
+}
+
+func echo(args []string) {
+	for index, item := range args {
+		fmt.Println("at index:", index, ",arg:", item)
+	}
+
+	/*
+		this is the simple echo example which prints arguments to the stdout
+		two example about usage of args
+		first garbage way
+		second efficient way  (I think)
+
+		I hope we can compare two methods by old way (by calculating execution times)
+
+	*/
+	// first method
+	startTime := time.Now()
+	var result, space string
+	for _, item := range args[1:] {
+		result += space + item
+		space = " "
+	}
+	fmt.Println("first method's result:", result)
+	endTime := time.Now()
+	firstDuration := endTime.Sub(startTime)
+	fmt.Println("first duration:", firstDuration)
+
+	//second method
+	// we ignore first element ([1:]) because it is not an argument it is command itself
+	startTime = time.Now()
+	fmt.Println("second method's result:", strings.Join(args[1:], " "))
+	endTime = time.Now()
+	secondDuration := endTime.Sub(startTime)
+	fmt.Println("second duration:", secondDuration)
+
+}
+
+func unique() {
+	/*
+		unique prints the text of each line that appears more than
+		once in the text file (or standard input), preceded by its count
+	*/
+	/*
+		create a map with key which is line
+		lets loop over item and increase maps values by one
+	*/
+	args := bufio.NewScanner(os.Stdin)
+	result := make(map[string]int)
+
+	for args.Scan() {
+		if args.Text() == "exit" || args.Text() == string(0) || args.Text() == "" {
+			break
+		}
+		result[args.Text()] += 1
+	}
+	fmt.Println("----- result -----", result)
 }
