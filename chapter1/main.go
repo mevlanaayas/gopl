@@ -39,13 +39,25 @@ func main() {
 		for package-level you must use one starts with var
 	*/
 
+	/*
+		about "nil"
+		nil is a predeclared identifier representing the zero value for a
+		pointer, channel, func, interface, map, or slice type.
+		you can run: godoc builtin nil
+	*/
+
 	fmt.Println("chapter1")
 
 	fmt.Println("*echo program*")
 	echo(os.Args)
 
-	fmt.Println("*unique program*")
-	unique()
+	fmt.Println("*unique program with standard input*")
+	result := make(map[string]int)
+	unique(os.Stdin, result)
+	fmt.Println("----- result -----", result)
+
+	fmt.Println("*uniqueTwo program with standard/file input*")
+	uniqueTwo()
 
 	// while loop
 	condition := true
@@ -160,7 +172,13 @@ func echo(args []string) {
 
 }
 
-func unique() {
+/*
+we change unique func to handle both standard input and file input
+note that standard input (os.Stdin) is also File pointer
+also we will need to extend our results for multiple file case
+so we pass results to function
+*/
+func unique(file *os.File, result map[string]int) {
 	/*
 		unique prints the text of each line that appears more than
 		once in the text file (or standard input), preceded by its count
@@ -169,8 +187,7 @@ func unique() {
 		create a map with key which is line
 		lets loop over item and increase maps values by one
 	*/
-	args := bufio.NewScanner(os.Stdin)
-	result := make(map[string]int)
+	args := bufio.NewScanner(file)
 
 	for args.Scan() {
 		if args.Text() == "exit" || args.Text() == string(0) || args.Text() == "" {
@@ -178,5 +195,33 @@ func unique() {
 		}
 		result[args.Text()] += 1
 	}
+}
+
+func uniqueTwo() {
+	/*
+		unique v2 looks for args from user. if user gives filename then
+		runs uniques on file content
+		runs on std in otherwise
+		we must look os.Args to check user gives us a filename
+	*/
+
+	args := os.Args[1:]
+	result := make(map[string]int)
+	if len(args) == 0 {
+		// there is no file name. time to take standard input
+		fmt.Println("there is no filename found, calling unique()")
+		unique(os.Stdin, result)
+	}
+	for _, filename := range args {
+		file, err := os.Open(filename)
+		if err != nil {
+			// we use print instead of panic to not break for loop.
+			fmt.Println(err)
+			continue
+		}
+		unique(file, result)
+		file.Close()
+	}
 	fmt.Println("----- result -----", result)
+
 }
