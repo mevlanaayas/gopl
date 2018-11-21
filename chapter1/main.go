@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"reflect"
 	"strings"
@@ -58,6 +59,9 @@ func main() {
 
 	fmt.Println("*uniqueTwo program with standard/file input*")
 	uniqueTwo()
+
+	fmt.Println("*uniqueThree program with standard/file (We use ReadFile) input*")
+	uniqueThree()
 
 	// while loop
 	condition := true
@@ -221,6 +225,40 @@ func uniqueTwo() {
 		}
 		unique(file, result)
 		file.Close()
+	}
+	fmt.Println("----- result -----", result)
+
+}
+
+func uniqueThree() {
+	/*
+		in this function we don't want to Open and read file manually (with Scanner)
+		we want file's all contents at once.
+		note that:
+			we use ReadFile to do this job. And at last ReadFile function calls Open method ;)
+			it is implemented to give choices to people
+	*/
+	args := os.Args
+	result := make(map[string]int)
+	if len(args) == 0 {
+		fmt.Println("not collected any filename")
+		unique(os.Stdin, result)
+	}
+	for _, filename := range os.Args[1:] {
+		data, err := ioutil.ReadFile(filename)
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+		/*
+			we will have data which contains all data (included new lines)
+			A big but here:
+				return value of ReadFile is byte type. So type of data is byte.
+			first we convert it to string then we split it from newlines
+		*/
+		for _, line := range strings.Split(string(data), "\n") {
+			result[line] += 1
+		}
 	}
 	fmt.Println("----- result -----", result)
 
