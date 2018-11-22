@@ -1,0 +1,11 @@
+var wg sync.WaitGroup
+// tell to wait group that we will be waiting for one goroutines
+wg.Add(1)
+go func() {
+    http.ListenAndServe(":6161", nil)
+    // when goroutine finished, tell to wait group we are done
+    defer wg.Done()
+    defer fmt.Println("done")
+}()
+// wait until all goroutines sent a "done" message
+wg.Wait()

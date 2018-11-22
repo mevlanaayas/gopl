@@ -1,19 +1,20 @@
 package main
 
-import "net/http"
+import (
+	"fmt"
+	"net/http"
+)
 
 func main()  {
 	http.HandleFunc("/", handler)
-	http.HandleFunc("/hello", hello)
-	go func() {
-		http.ListenAndServe("localhost:8080", nil)
-	}()
+	err := http.ListenAndServe(":9999", nil)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Hello There"))
-}
-
-func hello(w http.ResponseWriter, r *http.Request)  {
-	w.Write([]byte("Hello World"))
+	// we can also use Fprintf here instead of  w.Writer
+	// w.Write([]byte(r.URL.Path))
+	fmt.Fprintf(w, "Requested url is: %s", r.URL.Path)
 }
