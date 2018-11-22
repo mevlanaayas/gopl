@@ -3,12 +3,16 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"io/ioutil"
+	"net/http"
 	"os"
 	"reflect"
 	"strings"
 	"time"
 )
+
+const prefix string = "http://"
 
 /*
 chapter one is hello world chapter but there is some extra
@@ -49,19 +53,29 @@ func main() {
 
 	fmt.Println("chapter1")
 
-	fmt.Println("*echo program*")
-	echo(os.Args)
-
-	fmt.Println("*unique program with standard input*")
-	result := make(map[string]int)
-	unique(os.Stdin, result)
-	fmt.Println("----- result -----", result)
-
-	fmt.Println("*uniqueTwo program with standard/file input*")
-	uniqueTwo()
-
-	fmt.Println("*uniqueThree program with standard/file (We use ReadFile) input*")
-	uniqueThree()
+	// runs a function according to the user input to handle un-compatible inputs for multiple functions
+	switch os.Args[1] {
+	case "echo":
+		fmt.Println("*echo program*")
+		echo(os.Args)
+	case "unique":
+		fmt.Println("*unique program with standard input*")
+		result := make(map[string]int)
+		unique(os.Stdin, result)
+		fmt.Println("----- result -----", result)
+	case "uniqueTwo":
+		fmt.Println("*uniqueTwo program with standard/file input*")
+		uniqueTwo()
+	case "uniqueThree":
+		fmt.Println("*uniqueThree program with standard/file (We use ReadFile) input*")
+		uniqueThree()
+	case "fetch":
+		fmt.Println("*fetch program with standard input*")
+		fetch()
+	case "fetchTwo":
+		fmt.Println("*fetchTwo program to print response to standard output*")
+		fetchTwo()
+	}
 
 	// while loop
 	condition := true
@@ -262,4 +276,55 @@ func uniqueThree() {
 	}
 	fmt.Println("----- result -----", result)
 
+}
+
+func fetch() {
+	/*
+		take user input (from standard input)
+		get urls (os.Args)
+		and fetch all of them (http.Get)
+	*/
+	result := make(map[string]string)
+	for _, url := range os.Args[2:] {
+		if !strings.HasPrefix(url, prefix) {
+			url = httpPatcher(url)
+		}
+		fmt.Println("url inside fetch function:", url)
+		response, err := http.Get(url)
+		if err != nil {
+			fmt.Println(err)
+		}
+		content, err := ioutil.ReadAll(response.Body)
+		if err != nil {
+			fmt.Println(err)
+		}
+		response.Body.Close()
+		result[url] = string(content)
+
+	}
+	fmt.Println("----- result -----", result)
+}
+
+func fetchTwo() {
+	for _, url := range os.Args[2:] {
+		if !strings.HasPrefix(url, prefix) {
+			url = httpPatcher(url)
+		}
+		fmt.Println("url inside fetch function:", url)
+		response, err := http.Get(url)
+		if err != nil {
+			fmt.Println(err)
+		}
+		fmt.Println("Response status:", response.Status)
+		result, err := io.Copy(os.Stdout, response.Body)
+		if err != nil {
+			fmt.Println(err)
+		}
+		fmt.Println("copy result:", result)
+	}
+}
+
+func httpPatcher(url string) (fixedUrl string) {
+	fixedUrl = prefix + url
+	return
 }
