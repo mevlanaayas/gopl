@@ -1,1 +1,1 @@
-General look to golang
+Go programming language book chapter 1 - General look to golang
