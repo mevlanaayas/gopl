@@ -9,3 +9,10 @@ go func() {
 }()
 // wait until all goroutines sent a "done" message
 wg.Wait()
+
+
+https://www.reddit.com/r/golang/comments/1y3spq/how_to_wait_for_all_goroutines_to_finish/cfh9fg7/
+
+https://nathanleclaire.com/blog/2014/02/15/how-to-wait-for-all-goroutines-to-finish-executing-before-continuing/
+
+https://nathanleclaire.com/blog/2014/02/21/how-to-wait-for-all-goroutines-to-finish-executing-before-continuing-part-two-fixing-my-ooops/
