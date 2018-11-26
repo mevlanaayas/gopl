@@ -14,4 +14,7 @@ Short variable declaration
 
 Pointer declaration
 
+Pointer over function
+
+Flags
 
