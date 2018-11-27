@@ -2,6 +2,8 @@ package main
 
 import "fmt"
 
+var global *int
+
 func main() {
 	/*
 		--"new" function--
@@ -29,4 +31,41 @@ func main() {
 	*/
 	fmt.Println(*pointerVar)
 
+	/*
+		--"lifetime of variables"--
+		package-level variables live through the program's runtime
+		local variables live till they are unreachable
+
+		garbage-collector : how it knows the variable life is ended?
+
+		it is important to think about variables lifetime
+		when you think about optimization.
+
+	*/
+	escapePossible()
+	escapeNotPossible()
+	fmt.Println(global)
+	// again address :)
+	fmt.Println(*global)
+
+}
+
+func escapePossible() {
+	/*
+		in this function local variable x lives even function ends.
+		we call it x escapes from escapePossible
+		it important when you think about performance optimizations
+		because escapes requires extra memory allocation.
+	*/
+	var x int
+	x = 1
+	global = &x
+}
+
+func escapeNotPossible() {
+	/*
+		in this function when function called, y is created and no more lives when function finished.
+	*/
+	y := new(int)
+	*y = 1
 }
