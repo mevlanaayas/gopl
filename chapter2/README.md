@@ -18,3 +18,8 @@ Pointer over function
 
 Flags
 
+**LifeTime**
+
+New function
+
+Lifetime of Variables
