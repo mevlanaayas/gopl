@@ -23,3 +23,22 @@ Flags
 New function
 
 Lifetime of Variables
+
+**Assignment**
+
+Assigning values
+
+Assigning multi values (tuple assignment)
+
+Assigning function results (whose return values are multiple)
+
+Ignoring return values
+
+**types**
+
+New types
+
+Type properties
+
+**Packages**
+
